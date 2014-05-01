@@ -12,8 +12,11 @@ defmodule Stack.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [ applications: [],
-      mod: { Stack, [] } ]
+    [
+      applications: [],
+      mod: { Stack, ["cat", "dog", "rat", "ant", "bat"] },
+      registered: [ :stack ]
+    ]
   end
 
   # List all dependencies in the format:
