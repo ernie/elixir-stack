@@ -1,18 +1,18 @@
 defmodule Stack.Supervisor do
   use Supervisor.Behaviour
 
-  def start_link do
-    :supervisor.start_link(__MODULE__, [])
+  def start_link(list) do
+    result = {:ok, sup} = :supervisor.start_link(__MODULE__, list)
+    start_workers(sup, list)
+    result
   end
 
-  def init([]) do
-    children = [
-      # Define workers and child supervisors to be supervised
-      # worker(Stack.Worker, [arg1, arg2, arg3])
-    ]
+  def start_workers(sup, list) do
+    {:ok, stash} = :supervisor.start_child(sup, worker(Stack.Stash, [list]))
+    :supervisor.start_child(sup, worker(Stack.SubSupervisor, [stash]))
+  end
 
-    # See http://elixir-lang.org/docs/stable/Supervisor.Behaviour.html
-    # for other strategies and supported options
-    supervise(children, strategy: :one_for_one)
+  def init(_) do
+    supervise([], strategy: :one_for_one)
   end
 end
